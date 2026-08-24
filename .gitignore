@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# Screenshots
+backend/static/screenshots/
+backend/static/screenshots_test/
+
+# System / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

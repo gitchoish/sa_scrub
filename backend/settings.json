@@ -1,0 +1,39 @@
+{
+    "target_keywords": [
+        "비타민데이팩",
+        "데이팩올인원",
+        "데이팩",
+        "데이팩올인원영양제",
+        "데이팩종합영양제",
+        "데이팩종합비타민",
+        "데이팩멀티비타민",
+        "데이팩영양제",
+        "데이팩비타민",
+        "올인원영양제데이팩",
+        "종합영양제데이팩",
+        "종합비타민데이팩",
+        "멀티비타민데이팩",
+        "올인원데이팩",
+        "영양제데이팩"
+    ],
+    "my_domains": [
+        "https://daypackmall.com/",
+        "https://brand.naver.com/daypack",
+        "daypackmall.com"
+    ],
+    "my_stores": [
+        "데이팩 공식몰"
+    ],
+    "scheduler_active": true,
+    "scheduler_interval": 180,
+    "smtp_server": "smtp.naver.com",
+    "smtp_port": 587,
+    "smtp_user": "iys03208@naver.com",
+    "smtp_password": "",
+    "receiver_email": "seunghyuk.choi@playd.com",
+    "naver_cookie": "",
+    "excluded_companies": [
+        "쿠팡",
+        "G마켓"
+    ]
+}
