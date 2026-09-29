@@ -490,6 +490,8 @@ function App() {
     if (activeTab === 'all') return true;
     if (activeTab === 'powerlink') return item.ad_type === '파워링크';
     if (activeTab === 'shopping') return item.ad_type === '쇼핑광고';
+    if (activeTab === 'pc') return item.device === 'PC';
+    if (activeTab === 'mobile') return item.device === '모바일';
     return true;
   });
 
@@ -772,7 +774,7 @@ function App() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>작업 제어 장치</h3>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>네이버 모바일 광고 스크랩 및 증빙 수집 태스크를 실행합니다.</p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>네이버 모바일 및 PC 통합 광고 스크랩 및 증빙 수집 태스크를 실행합니다.</p>
               </div>
               
               <div style={{ display: 'flex', gap: '12px' }}>
@@ -992,12 +994,12 @@ function App() {
                 </div>
                 
                 {/* Result Tabs */}
-                <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
+                <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.03)', padding: '4px', borderRadius: '8px', border: '1px solid var(--card-border)', flexWrap: 'wrap' }}>
                   <button 
                     onClick={() => setActiveTab('all')} 
                     style={{ background: activeTab === 'all' ? 'var(--accent-primary)' : 'none', border: 'none', color: 'white', padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', transition: 'var(--transition-smooth)' }}
                   >
-                    전체
+                    전체 ({results.length})
                   </button>
                   <button 
                     onClick={() => setActiveTab('powerlink')} 
@@ -1010,6 +1012,18 @@ function App() {
                     style={{ background: activeTab === 'shopping' ? 'var(--accent-primary)' : 'none', border: 'none', color: 'white', padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', transition: 'var(--transition-smooth)' }}
                   >
                     쇼핑광고 ({results.filter(r => r.ad_type === '쇼핑광고').length})
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('pc')} 
+                    style={{ background: activeTab === 'pc' ? '#3b82f6' : 'none', border: 'none', color: 'white', padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', transition: 'var(--transition-smooth)' }}
+                  >
+                    💻 PC ({results.filter(r => r.device === 'PC').length})
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('mobile')} 
+                    style={{ background: activeTab === 'mobile' ? '#10b981' : 'none', border: 'none', color: 'white', padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer', transition: 'var(--transition-smooth)' }}
+                  >
+                    📱 모바일 ({results.filter(r => r.device === '모바일').length})
                   </button>
                 </div>
               </div>
@@ -1036,9 +1050,22 @@ function App() {
                       filteredResults.map((item, idx) => (
                         <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', height: '48px', verticalAlign: 'middle' }}>
                           <td style={{ padding: '8px 16px' }}>
-                            <span className={`status-badge ${item.ad_type === '파워링크' ? 'powerlink' : 'shopping'}`}>
-                              {item.ad_type}
-                            </span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span className={`status-badge ${item.ad_type === '파워링크' ? 'powerlink' : 'shopping'}`}>
+                                {item.ad_type}
+                              </span>
+                              <span style={{ 
+                                fontSize: '0.7rem', 
+                                padding: '2px 6px', 
+                                borderRadius: '4px', 
+                                background: item.device === 'PC' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(16, 185, 129, 0.15)', 
+                                color: item.device === 'PC' ? '#60a5fa' : '#34d399', 
+                                fontWeight: 600,
+                                border: `1px solid ${item.device === 'PC' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`
+                              }}>
+                                {item.device || '모바일'}
+                              </span>
+                            </div>
                           </td>
                           <td style={{ padding: '8px 16px', fontWeight: 600 }}>{item.keyword}</td>
                           <td style={{ padding: '8px 16px', color: '#6366f1' }}>{item.company}</td>

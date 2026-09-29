@@ -184,6 +184,10 @@ def create_excel_bytes(data_list: list, sheet_mode: str = "original") -> bytes:
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         if sheet_mode == "original":
             export_df = df.drop(columns=['screenshot']) if 'screenshot' in df.columns else df
+            # 컬럼 보기 좋게 재배치 (device 우선)
+            col_order = [c for c in ['device', 'ad_type', 'keyword', 'company', 'product_name', 'url'] if c in export_df.columns]
+            other_cols = [c for c in export_df.columns if c not in col_order]
+            export_df = export_df[col_order + other_cols]
             export_df.to_excel(writer, sheet_name='전체', index=False)
             
             powerlink_df = export_df[export_df['ad_type'] == '파워링크']
@@ -194,7 +198,9 @@ def create_excel_bytes(data_list: list, sheet_mode: str = "original") -> bytes:
             if len(shopping_df) > 0:
                 shopping_df.to_excel(writer, sheet_name='쇼핑광고', index=False)
         else: # complaint용 간소화 포맷
-            columns_to_keep = ['keyword', 'company', 'product_name', 'url']
+            columns_to_keep = [c for c in ['device', 'ad_type', 'keyword', 'company', 'product_name', 'url'] if c in df.columns]
+            if not columns_to_keep:
+                columns_to_keep = ['keyword', 'company', 'product_name', 'url']
             for col in columns_to_keep:
                 if col not in df.columns:
                     df[col] = ""
@@ -315,6 +321,9 @@ def format_complaint_text(results_list: list) -> str:
     complaint_text = f"담당자님 안녕하세요, 브랜드키워드({keyword_list})에서 관련 없는 경쟁사 광고 노출 확인되어 노출제재 요청드립니다. 확인 부탁드립니다.\n\n"
     
     for _, row in df.iterrows():
+        dev = row.get('device') or '모바일'
+        ad_t = row.get('ad_type') or '광고'
+        complaint_text += f"구분: [{dev}] {ad_t}\n"
         complaint_text += f"키워드: {row['keyword']}\n"
         complaint_text += f"업체명: {row['company']}\n"
         if row.get('product_name'):
