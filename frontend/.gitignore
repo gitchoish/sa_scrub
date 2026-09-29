@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+# dist (포함하여 Node.js 없이도 즉시 실행 가능)
 dist-ssr
 *.local
 

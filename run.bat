@@ -1,30 +1,39 @@
 @echo off
+chcp 65001 >nul
 cd /d "%~dp0"
 
 echo =================================================================
-echo Naver Search Ad Complaint Dashboard Launcher
+echo [네이버 검색광고 침해 모니터링 시스템 실행기]
 echo =================================================================
 echo.
 
-:: Detecting python command
+:: Python 명령어 감지
 set PY_CMD=python
 where python >nul 2>&1
 if %errorlevel% neq 0 set PY_CMD=py
 where %PY_CMD% >nul 2>&1
 if %errorlevel% neq 0 set PY_CMD=python3
+where %PY_CMD% >nul 2>&1
+if %errorlevel% neq 0 (
+    echo ❌ [오류] Python이 감지되지 않았습니다. Python이 설치되어 있고 PATH에 추가되어 있는지 확인해주세요.
+    pause
+    exit /b 1
+)
 
-echo [1/2] Starting backend API server...
+echo 🚀 시스템 서버를 시작하는 중입니다...
 start /B "" cmd /c "cd backend & %PY_CMD% main.py"
 
-echo [2/2] Starting frontend Vite dev server...
-start /B "" cmd /c "cd frontend & npm run dev"
+:: 서버 구동 대기 후 기본 웹 브라우저 자동 실행
+timeout /t 3 /nobreak >nul
+start http://localhost:8989
 
 echo.
 echo =================================================================
-echo All servers are running inside this SINGLE window!
-echo Open your browser: http://localhost:5173
+echo ✅ 시스템이 정상 구동되었습니다!
+echo 👉 대시보드 주소: http://localhost:8989
+echo (잠시 후 브라우저가 자동으로 열립니다.)
 echo.
-echo Press CTRL+C inside this window or close it to stop the servers.
+echo ⚠️ 이 창을 닫으면 프로그램이 종료됩니다.
 echo =================================================================
 echo.
 

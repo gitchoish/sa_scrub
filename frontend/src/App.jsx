@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import './App.css';
 
-const API_BASE = 'http://127.0.0.1:8989';
+const API_BASE = window.location.port === '5173' ? 'http://127.0.0.1:8989' : '';
 
 // 타임스탬프 파싱 헬퍼 (YYYYMMDD_HHmmss -> Date 객체)
 const parseTimestamp = (ts) => {

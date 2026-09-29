@@ -16,36 +16,31 @@
 
 ## 💻 다른 PC에서 실행하는 방법 (담당자 인수인계 가이드)
 
-### 1단계: 필수 프로그램 사전 설치 (최초 1회)
-해당 PC에 아래 2가지 프로그램이 설치되어 있어야 합니다.
-1. **Python (3.10 이상 권장)**
-   - 다운로드: https://www.python.org/downloads/
-   - ⚠️ **중요**: 설치 화면 맨 처음 하단의 **`Add Python to PATH` (또는 `Add python.exe to PATH`) 체크박스를 반드시 체크**하고 설치해야 합니다.
-2. **Node.js (LTS 버전)**
-   - 다운로드: https://nodejs.org/ (LTS 추천)
+> 💡 **Node.js 설치 불필요!** 웹 화면(대시보드)이 내장 빌드되어 있어, 상대방 PC에는 **Python 단 1개만 설치**하면 즉시 구동됩니다.
+
+### 1단계: Python 설치 (최초 1회)
+1. **Python (3.10 이상 권장)** 다운로드: [공식 다운로드 링크](https://www.python.org/downloads/)
+2. ⚠️ **[가장 중요]** 설치 화면 맨 첫 페이지 하단의 **`Add Python to PATH` (또는 `Add python.exe to PATH`) 체크박스를 반드시 체크**하고 [Install Now]를 클릭합니다.
 
 ---
 
-### 2단계: 프로젝트 다운로드
-- **Git 사용 시**:
-  ```bash
-  git clone https://github.com/gitchoish/sa_scrub.git
-  ```
-- **Git 미사용 시**:
-  - GitHub 페이지(`https://github.com/gitchoish/sa_scrub`) 우측 초록색 `<> Code` 버튼 -> `Download ZIP` 클릭 후 압축 해제
+### 2단계: 프로젝트 전달 및 다운로드
+- **방법 A (추천 - 사내 전달 시)**: 
+  - 현재 프로젝트 폴더 전체를 ZIP으로 압축하여 메신저(슬랙/잔디/카톡)나 사내 드라이브로 전달 (현재 설정된 키워드/이메일 세팅 유지)
+- **방법 B (GitHub 이용 시)**:
+  - GitHub 페이지(`https://github.com/gitchoish/sa_scrub`)에서 `Download ZIP` 또는 `git clone`
 
 ---
 
 ### 3단계: 원클릭 초기 셋업 (최초 1회)
-- 폴더 내의 **`setup.bat`** 파일을 더블 클릭하여 실행합니다.
-- 파이썬 패키지(`requirements.txt`), Playwright 브라우저, 프론트엔드 라이브러리(`npm install`)가 자동으로 설치됩니다.
+- 폴더 안의 **`setup.bat`** 파일을 더블 클릭하여 실행합니다.
+- 파이썬 필수 패키지와 크롬 캡처 엔진(Playwright)이 자동으로 설치됩니다. (약 1분 소요)
 
 ---
 
 ### 4단계: 프로그램 실행
-- 폴더 내의 **`run.bat`** 파일을 더블 클릭하여 실행합니다.
-- 콘솔 창이 열리며 백엔드와 프론트엔드가 실행됩니다.
-- 브라우저를 열고 **`http://localhost:5173`** 에 접속하시면 대시보드 화면이 열립니다.
+- 폴더 안의 **`run.bat`** 파일을 더블 클릭합니다.
+- 잠시 후 **기본 웹 브라우저가 자동으로 열리며 대시보드 화면(`http://localhost:8989`)**이 나타납니다!
 
 ---
 

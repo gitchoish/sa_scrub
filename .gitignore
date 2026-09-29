@@ -10,7 +10,7 @@ ENV/
 
 # Node / Frontend
 frontend/node_modules/
-frontend/dist/
+# frontend/dist/ (포함하여 Node.js 없이도 즉시 실행 가능하도록 지원)
 frontend/build/
 frontend/.vite/
 

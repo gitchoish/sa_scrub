@@ -696,6 +696,11 @@ async def download_screenshots():
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
 
+# 빌드된 프론트엔드 정적 서빙 (Node.js 미설치 환경에서도 단일 파이썬 서버로 완전 구동)
+FRONTEND_DIST = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
+if os.path.exists(FRONTEND_DIST):
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
+
 if __name__ == "__main__":
     import uvicorn
     # uvicorn 기동 전에 8989 포트를 정리
