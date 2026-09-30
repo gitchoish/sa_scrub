@@ -8,8 +8,11 @@ import signal
 # Windows 환경에서 asyncio subprocess를 사용하기 위해 ProactorEventLoop 지정
 if sys.platform.startswith('win'):
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 def kill_port_owner(port: int):
     """지정한 로컬 포트를 점유 중인 프로세스를 강제 종료"""

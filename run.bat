@@ -1,40 +1,40 @@
 @echo off
-chcp 65001 >nul
 cd /d "%~dp0"
+title Naver Search Ad Monitor Launcher
 
-echo =================================================================
-echo [네이버 검색광고 침해 모니터링 시스템 실행기]
-echo =================================================================
-echo.
+echo Starting Launcher...
 
-:: Python 명령어 감지
-set PY_CMD=python
-where python >nul 2>&1
-if %errorlevel% neq 0 set PY_CMD=py
-where %PY_CMD% >nul 2>&1
-if %errorlevel% neq 0 set PY_CMD=python3
-where %PY_CMD% >nul 2>&1
-if %errorlevel% neq 0 (
-    echo ❌ [오류] Python이 감지되지 않았습니다. Python이 설치되어 있고 PATH에 추가되어 있는지 확인해주세요.
-    pause
-    exit /b 1
+:: 1. Try system python
+python --version >nul 2>&1
+if %errorlevel% equ 0 (
+    python launcher.py
+    goto end
 )
 
-echo 🚀 시스템 서버를 시작하는 중입니다...
-start /B "" cmd /c "cd backend & %PY_CMD% main.py"
+:: 2. Try py launcher
+py --version >nul 2>&1
+if %errorlevel% equ 0 (
+    py -3 launcher.py
+    goto end
+)
 
-:: 서버 구동 대기 후 기본 웹 브라우저 자동 실행
-timeout /t 3 /nobreak >nul
-start http://localhost:8989
+:: 3. Try common Python install paths in LocalAppData (fallback for users who didn't check Add to PATH)
+for /d %%D in ("%LOCALAPPDATA%\Programs\Python\Python*") do (
+    if exist "%%D\python.exe" (
+        "%%D\python.exe" launcher.py
+        goto end
+    )
+)
 
+:: 4. If all failed, show error
 echo.
-echo =================================================================
-echo ✅ 시스템이 정상 구동되었습니다!
-echo 👉 대시보드 주소: http://localhost:8989
-echo (잠시 후 브라우저가 자동으로 열립니다.)
+echo =====================================================================
+echo [ERROR] Python was not found on your system!
 echo.
-echo ⚠️ 이 창을 닫으면 프로그램이 종료됩니다.
-echo =================================================================
+echo Please install Python 3.10 or higher from: https://www.python.org/
+echo IMPORTANT: Make sure to check 'Add python.exe to PATH' when installing!
+echo =====================================================================
 echo.
-
 pause
+
+:end
