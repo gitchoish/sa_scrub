@@ -55,10 +55,12 @@ def extract_brand_name_by_cleaning(parent_text: str) -> str:
     """광고 뱃지 부모 영역의 전체 텍스트에서 뱃지용 특수기호/키워드를 소거하여 순수 스토어명 추출"""
     if not parent_text:
         return ""
-    # 광고, ⓘ, 정보 등 뱃지 관련 단어 및 심볼 일괄 소거
+    # 광고, ⓘ, 정보, 네이버페이 등 뱃지 관련 단어 및 심볼 일괄 소거
     cleaned = parent_text.replace("광고", "").replace("ⓘ", "").replace("정보", "")
+    for noise in ["네이버페이플러스", "네이버페이", "공식"]:
+        cleaned = cleaned.replace(noise, "")
     # 줄바꿈 및 좌우 특수문자 클렌징
-    cleaned = cleaned.replace("\n", " ").strip(" ⓘ()[]-·•/|:：")
+    cleaned = cleaned.replace("\n", " ").strip(" ⓘ()[]-·•/|:： ")
     return cleaned
 
 async def capture_element_screenshot(element: Locator, keyword: str, company: str, ad_type: str, screenshot_dir: str) -> str:
@@ -206,28 +208,25 @@ async def crawl_shopping_ads_mobile(page: Page, keyword: str, my_stores: list, e
         await asyncio.sleep(2)
         shopping_section = None
         
-        # 방법 A: "네이버 가격비교" 텍스트 조상 section
-        price_text_locator = page.locator("text=네이버 가격비교")
-        if await price_text_locator.count() > 0:
-            shopping_section = price_text_locator.locator('xpath=ancestor::section').first
-            await on_progress("    ✓ [모바일] 쇼핑 영역 특정 성공 ('네이버 가격비교' 조상)")
-            
-        # 방법 B: "쇼핑" 텍스트 조상 section
-        if not shopping_section or await shopping_section.count() == 0:
-            shopping_text = page.locator("text=쇼핑")
-            if await shopping_text.count() > 0:
-                shopping_section = shopping_text.locator('xpath=ancestor::section').first
-                await on_progress("    ✓ [모바일] 쇼핑 영역 특정 성공 ('쇼핑' 조상)")
-                
-        # 방법 C: 가격비교/쇼핑 텍스트 포함 section
-        if not shopping_section or await shopping_section.count() == 0:
-            shopping_section = page.locator('section:has-text("가격비교"), section:has-text("쇼핑")').first
-            if await shopping_section.count() > 0:
-                await on_progress("    ✓ [모바일] 쇼핑 영역 특정 성공 (has-text)")
-                
+        # 정밀 쇼핑 섹션 탐색 (브랜드검색 섹션의 '쇼핑백' 등 텍스트 오인 완전 방지)
+        sec_candidates = [
+            page.locator('section').filter(has_text="네이버 쇼핑"),
+            page.locator('section').filter(has_text="네이버플러스 스토어"),
+            page.locator('section').filter(has_text="쇼핑 인기상품"),
+            page.locator('section').filter(has_text="네이버 가격비교")
+        ]
+        for cand in sec_candidates:
+            if await cand.count() > 0:
+                cand_first = cand.first
+                is_brandsearch = await cand_first.locator('[class*="brandsearch"], [id*="brandsearch"]').count() > 0
+                if not is_brandsearch:
+                    shopping_section = cand_first
+                    await on_progress("    ✓ [모바일] 정밀 쇼핑 전용 영역 특정 성공")
+                    break
+                    
         if not shopping_section or await shopping_section.count() == 0:
             shopping_section = page
-            await on_progress("    ⚠️ [모바일] 쇼핑 전용 영역을 특정할 수 없어 페이지 전체를 스캔합니다.")
+            await on_progress("    ℹ️ [모바일] 쇼핑 전용 영역 헤더가 없어 페이지 전체에서 쇼핑 광고를 탐색합니다.")
             
         collected_items = set()
         
@@ -280,6 +279,9 @@ async def crawl_shopping_ads_mobile(page: Page, keyword: str, my_stores: list, e
                         brand_name = None
                         
                         mall_locators = [
+                            parent_card.locator('a[class*="mall"]'),
+                            parent_card.locator('a[class*="seller"]'),
+                            parent_card.locator('a[class*="adshop"]'),
                             parent_card.locator('span[class*="mall"]'),
                             parent_card.locator('span[class*="seller"]'),
                             parent_card.locator('div.mall_area span')
@@ -323,7 +325,7 @@ async def crawl_shopping_ads_mobile(page: Page, keyword: str, my_stores: list, e
                             await on_progress(f"       → [모바일] 지정 제외 경쟁사 (제외): '{brand_name}'")
                             continue
                             
-                        product_element = parent_card.locator('strong')
+                        product_element = parent_card.locator('strong, a[class*="tit"], div[class*="tit"], span[class*="tit"]')
                         product_name = ""
                         if await product_element.count() > 0:
                             product_name = await product_element.first.inner_text()
